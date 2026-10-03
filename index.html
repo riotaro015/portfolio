@@ -81,7 +81,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
 <body>
 <div id="boot"><pre></pre></div>
 <main class="win">
-  <div class="bar"><span>BESTIAWORKS.EXE</span><span id="clock">PLAY 00:00</span></div>
+  <div class="bar"><span>RIOTARO.EXE</span><span id="clock">PLAY 00:00</span></div>
   <header>
     <img id="icon" src="icon.jpg" width="128" height="128" alt="BESTIAWORKS アイコン (クリックで話しかけられます)">
     <h1 id="name">&nbsp;</h1>
@@ -106,8 +106,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
   try{c=await (await fetch("config.json",{cache:"no-cache"})).json()}
   catch(e){$("err").textContent="config.json を読めません (サーバー経由で開いてください)";return}
 
-  $("name").textContent=c.name;document.title=c.name;
-  $("foot").textContent=c.name;$("year").textContent=new Date().getFullYear();
+  $("name").textContent=c.name;document.title=c.brand||c.name;
+  $("foot").textContent=c.brand||c.name;$("year").textContent=new Date().getFullYear();
   if(c.icon)$("icon").src=c.icon;
 
   // ---- 会話ウィンドウ(タイプライター) ----
