@@ -192,7 +192,9 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
       const d1=document.createElement("small"),d2=document.createElement("small");
       d1.innerHTML="";d1.append(fmt(e)+"  ");const cd=document.createElement("span");cd.className="cd2";cd.textContent=E.left(left);d1.append(cd);
       d2.textContent=venue+(e.space?"  /  "+E.space+" "+e.space:"");
-      card.append(n,d1,d2);evBox.append(card);
+      card.append(n,d1,d2);
+      if(o.note||e.note){const d3=document.createElement("small");d3.textContent=o.note||e.note;card.append(d3)}
+      evBox.append(card);
     }
     // ---- カテゴリ別リンク ----
     box.textContent="";
