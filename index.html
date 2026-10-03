@@ -61,7 +61,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
 @keyframes on{from{transform:scaleY(.02);filter:brightness(2.5)}60%{transform:scaleY(1.02);filter:brightness(1.4)}to{transform:none;filter:none}}
 #boot{display:none;position:fixed;inset:0;z-index:100;background:#0d0e18;color:var(--open);padding:24px;cursor:pointer}
 #boot pre{font:inherit;font-size:14px;line-height:1.8;white-space:pre-wrap}
-.boot #boot{display:block}.boot .win{visibility:hidden}
+.boot #boot{display:grid;place-items:center}.boot .win{visibility:hidden}
 .grp a:hover::before,.grp button:hover::before,.grp a:focus-visible::before,.grp button:focus-visible::before{animation:cur .5s steps(2) infinite}
 @keyframes cur{50%{transform:translateX(3px)}}
 @media (min-width:860px){
