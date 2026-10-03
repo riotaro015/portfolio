@@ -50,7 +50,12 @@ h2::before{content:"■ "}
 .grp a:hover small,.grp a:focus-visible small,.grp button:hover small,.grp button:focus-visible small{color:var(--text)}
 .grp button{border-style:dashed}
 footer{margin-top:18px;text-align:center;color:var(--dim);font-size:12px}
-#crt{background:none;border:0;color:var(--dim);font:inherit;cursor:pointer}
+.opt{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;font-size:12px}
+.opt span:first-child{color:var(--hi);margin-right:6px}
+.opt button{padding:2px 12px;border:2px solid var(--line);background:transparent;color:var(--dim);font:inherit;cursor:pointer}
+.opt button[aria-pressed=true]{background:var(--hi);border-color:var(--hi);color:var(--bg)}
+.opt button:hover,.opt button:focus-visible{outline:0;border-color:var(--hi);color:var(--hi)}
+.opt button[aria-pressed=true]:hover,.opt button[aria-pressed=true]:focus-visible{color:var(--bg)}
 #err{color:var(--closed);text-align:center}
 body{background-image:conic-gradient(#20233a 25%,transparent 0 50%,#20233a 0 75%,transparent 0);background-size:8px 8px}
 body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
@@ -89,7 +94,10 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
   </div>
   <div id="links"></div>
   <p id="err"></p>
-  <footer>&copy; <span id="year"></span> <span id="foot"></span> <button id="crt" type="button" aria-pressed="true">CRT ON</button></footer>
+  <footer>&copy; <span id="year"></span> <span id="foot"></span>
+    <div class="opt" role="group" aria-label="表示オプション"><span>OPTION</span><span>CRT</span>
+      <button type="button" data-crt="1">ON</button><button type="button" data-crt="0">OFF</button></div>
+  </footer>
 </main>
 <script>
 (async()=>{
@@ -172,9 +180,10 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
     t=setInterval(function(){pre.textContent+=L[i++]+"\n";if(i>=L.length){clearInterval(t);setTimeout(done,350)}},170);
     b.onclick=done;addEventListener("keydown",done,{once:true});
   }else go();
-  var c=document.getElementById("crt"),t0=Date.now(),ck=document.getElementById("clock"),p=function(n){return(n<10?"0":"")+n};
-  c.textContent="CRT "+(d.classList.contains("nocrt")?"OFF":"ON");
-  c.onclick=function(){var off=d.classList.toggle("nocrt");c.textContent="CRT "+(off?"OFF":"ON");c.setAttribute("aria-pressed",!off);try{localStorage.crt=off?"0":"1"}catch(e){}};
+  var t0=Date.now(),ck=document.getElementById("clock"),p=function(n){return(n<10?"0":"")+n},bs=document.querySelectorAll("[data-crt]");
+  var sync=function(){var off=d.classList.contains("nocrt");bs.forEach(function(x){x.setAttribute("aria-pressed",String((x.dataset.crt==="0")===off))})};
+  bs.forEach(function(x){x.onclick=function(){var off=x.dataset.crt==="0";d.classList.toggle("nocrt",off);sync();try{localStorage.crt=off?"0":"1"}catch(e){}}});
+  sync();
   setInterval(function(){var s=Math.floor((Date.now()-t0)/1000);ck.textContent="PLAY "+p(Math.floor(s/60)%100)+":"+p(s%60)},1000);
 })();
 </script>
