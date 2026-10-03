@@ -63,7 +63,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
   background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.35))}
 .nocrt body::after{display:none}
 .bar{display:flex;justify-content:space-between;margin:-20px -18px 16px;padding:2px 10px;background:var(--line);color:var(--bg);font-size:12px;letter-spacing:.08em}
-.opts{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px 18px;margin-bottom:14px}
+.opts{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px 18px;padding-bottom:14px;margin-bottom:22px;border-bottom:2px solid var(--dim)}
+.optt{flex:1 0 100%;margin:0}
 .win.go{animation:on .45s steps(6)}
 @keyframes on{from{transform:scaleY(.02);filter:brightness(2.5)}60%{transform:scaleY(1.02);filter:brightness(1.4)}to{transform:none;filter:none}}
 #boot{display:none;position:fixed;inset:0;z-index:100;background:#0d0e18;color:var(--open);padding:24px;cursor:pointer}
@@ -85,6 +86,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
 <main class="win">
   <div class="bar"><span>RIOTARO.EXE</span><span id="clock">PLAY 00:00</span></div>
   <div class="opts">
+    <h2 class="optt">OPTION</h2>
     <div class="opt" role="group" aria-label="Language"><span>LANGUAGE</span><button type="button" data-lang="ja">日本語</button><button type="button" data-lang="en">ENGLISH</button></div>
     <div class="opt" role="group" aria-label="CRT"><span>CRT</span><button type="button" data-crt="1">ON</button><button type="button" data-crt="0">OFF</button></div>
   </div>
