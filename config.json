@@ -172,7 +172,8 @@
       "url": "https://yaroufes.info/",
       "tag": "18+",
       "en": {
-        "venue": "Ota City Industrial Plaza PiO"
+        "venue": "Ota City Industrial Plaza PiO",
+        "name": "Yarou Fes 2026 -autumn-"
       },
       "book": {
         "title": "獣欲調伏！～国一番の魔物使いの叔父さんに弟子入りしたら、調教風景がドスケベすぎて目のやり場に困ってます～",
@@ -188,7 +189,8 @@
       "venue": "東京流通センター(TRC)",
       "status": "absent",
       "en": {
-        "venue": "Tokyo Ryutsu Center (TRC)"
+        "venue": "Tokyo Ryutsu Center (TRC)",
+        "name": "Shinshun Kemoket Yui"
       },
       "url": "https://skypalette.jp/kemoket/"
     },
@@ -201,7 +203,8 @@
       "url": "https://www.akaboo.jp/event/item/20208270.html",
       "en": {
         "venue": "Tokyo Big Sight",
-        "note": "Petit-only event inside HARU COMIC CITY Tokyo 2027"
+        "note": "Petit-only event inside HARU COMIC CITY Tokyo 2027",
+        "name": "Yarisugi! Osu Densetsu"
       }
     },
     {
@@ -210,7 +213,8 @@
       "venue": "インテックス大阪",
       "status": "planned",
       "en": {
-        "venue": "INTEX Osaka"
+        "venue": "INTEX Osaka",
+        "name": "Kansai Kemoket 12"
       },
       "url": "https://skypalette.jp/kemoket/"
     }
