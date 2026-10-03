@@ -50,7 +50,7 @@ h2::before{content:"■ "}
 .grp a:hover small,.grp a:focus-visible small,.grp button:hover small,.grp button:focus-visible small{color:var(--text)}
 .grp button{border-style:dashed}
 footer{margin-top:18px;text-align:center;color:var(--dim);font-size:12px}
-.opt{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;font-size:12px}
+.opt{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;font-size:12px}
 .opt span:first-child{color:var(--hi);margin-right:6px}
 .opt button{padding:2px 12px;border:2px solid var(--line);background:transparent;color:var(--dim);font:inherit;cursor:pointer}
 .opt button[aria-pressed=true]{background:var(--hi);border-color:var(--hi);color:var(--bg)}
@@ -95,7 +95,9 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
   <div id="links"></div>
   <p id="err"></p>
   <footer>&copy; <span id="year"></span> <span id="foot"></span>
-    <div class="opt" role="group" aria-label="表示オプション"><span>OPTION</span><span>CRT</span>
+    <div class="opt" role="group" aria-label="Language"><span>LANG</span>
+      <button type="button" data-lang="ja">日本語</button><button type="button" data-lang="en">ENGLISH</button></div>
+    <div class="opt" role="group" aria-label="CRT"><span>CRT</span>
       <button type="button" data-crt="1">ON</button><button type="button" data-crt="0">OFF</button></div>
   </footer>
 </main>
@@ -106,61 +108,81 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
   try{c=await (await fetch("config.json",{cache:"no-cache"})).json()}
   catch(e){$("err").textContent="config.json を読めません (サーバー経由で開いてください)";return}
 
-  $("name").textContent=c.name;document.title=c.brand||c.name;
+  const T={
+    ja:{open:"受付中",limited:"少数のみ受付",closed:"停止中",mail:"メールで依頼する",cd:(n,d)=>"受付再開まで あと <b>"+n+"</b> 日 ("+d+")",alt:"アイコン (クリックで話しかけられます)"},
+    en:{open:"OPEN",limited:"LIMITED",closed:"CLOSED",mail:"Request by email",cd:(n,d)=>"Reopens in <b>"+n+"</b> day"+(n===1?"":"s")+" ("+d+")",alt:"icon (click to talk)"}
+  };
+  const guess=(navigator.language||"").slice(0,2)==="ja"?"ja":"en";
+  let lang=guess;
+  try{lang=localStorage.lang||guess}catch(e){}
+  const tx=(k,fb)=>lang==="en"&&c.en&&c.en[k]!==undefined?c.en[k]:(c[k]!==undefined?c[k]:fb);
+
+  document.title=c.brand||c.name;
   $("foot").textContent=c.brand||c.name;$("year").textContent=new Date().getFullYear();
   if(c.icon)$("icon").src=c.icon;
 
   // ---- 会話ウィンドウ(タイプライター) ----
-  const say=$("say");let tm,full=c.tagline||"";
-  const type=t=>{clearInterval(tm);say.firstChild&&(say.textContent="");let i=0;
+  const say=$("say");let tm;
+  const type=t=>{clearInterval(tm);say.textContent="";let i=0;
     tm=setInterval(()=>{say.textContent=t.slice(0,++i);if(i>=t.length)clearInterval(tm)},45)};
-  type(full);
 
   // ---- アイコン: クリックで跳ねて話す ----
   const ic=$("icon");let bag=[];
   ic.onclick=()=>{ic.classList.remove("hop");void ic.offsetWidth;ic.classList.add("hop");
-    if(c.talk&&c.talk.length){if(!bag.length)bag=c.talk.map((_,i)=>i).sort(()=>Math.random()-.5);type(c.talk[bag.pop()])}};
+    const talk=tx("talk",[]);
+    if(talk.length){if(!bag.length)bag=talk.map((_,i)=>i).sort(()=>Math.random()-.5);type(talk[bag.pop()])}};
 
+  // ---- コミッション状態 (日付計算は言語に依らない) ----
+  const co=c.commission,JST=d=>new Date(d+"T00:00:00+09:00"),now=Date.now();
+  let st=co?co.status:"";
+  if(co&&st==="closed"&&co.reopen&&now>=JST(co.reopen))st="open";  // 再開日を過ぎたら自動で受付中表示
+  c._open=st!=="closed";
 
-  // ---- コミッション状態 + カウントダウン ----
-  const co=c.commission;
-  if(co){
-    const JST=d=>new Date(d+"T00:00:00+09:00"),now=Date.now();
-    let s=co.status;
-    if(s==="closed"&&co.reopen&&now>=JST(co.reopen))s="open";  // 再開日を過ぎたら自動で受付中表示
-    const b=$("badge");b.hidden=false;b.dataset.s=s;
-    $("stText").textContent="COMMISSION: "+({open:"受付中",limited:"少数のみ受付",closed:"停止中"}[s]||s)+(co.note?"  "+co.note:"");
-    if(s==="closed"&&co.reopen){
-      const t=JST(co.reopen),days=Math.ceil((t-now)/864e5),dd=co.reopen.replace(/-/g,"/");
-      $("cd").innerHTML="受付再開まで あと <b>"+days+"</b> 日 ("+dd+")";
-      if(co.since){const a=JST(co.since),r=Math.min(1,Math.max(0,(now-a)/(t-a))),g=$("gauge");g.hidden=false;
-        for(let i=0;i<20;i++){const e=document.createElement("i");if(i<Math.round(r*20))e.className="on";g.append(e)}}
-    }
-    c._open=s!=="closed";
-  }
-
-  // ---- カテゴリ別リンク ----
   const box=$("links");
-  for(const grp of c.groups){
-    const items=[];
-    for(const l of grp.links){
-      let el;
-      if(l.type==="mail"){
-        const m=c.mail;if(!(m&&m.b64&&c._open!==false))continue;  // 停止中・未設定は非表示
-        el=document.createElement("button");el.type="button";
-        el.onclick=()=>{location.href="mailto:"+atob(m.b64)+"?subject="+encodeURIComponent(m.subject||"")};
-      }else{
-        el=document.createElement("a");el.href=l.url;el.target="_blank";el.rel="noopener noreferrer me";
-      }
-      el.innerHTML="<span><b></b><small></small></span>";
-      el.querySelector("b").textContent=l.label;el.querySelector("small").textContent=l.desc||"";
-      items.push(el);
+  function render(){
+    const L=T[lang];
+    document.documentElement.lang=lang;
+    $("name").textContent=tx("name");$("icon").alt=(c.brand||c.name)+" "+L.alt;
+    type(tx("tagline",""));bag=[];
+    if(co){
+      const b=$("badge");b.hidden=false;b.dataset.s=st;
+      $("stText").textContent="COMMISSION: "+(L[st]||st)+(co.note?"  "+co.note:"");
+      if(st==="closed"&&co.reopen){
+        const t=JST(co.reopen),days=Math.ceil((t-now)/864e5);
+        $("cd").innerHTML=L.cd(days,co.reopen.replace(/-/g,"/"));
+        const g=$("gauge");
+        if(co.since&&!g.children.length){const a=JST(co.since),r=Math.min(1,Math.max(0,(now-a)/(t-a)));g.hidden=false;
+          for(let i=0;i<20;i++){const e=document.createElement("i");if(i<Math.round(r*20))e.className="on";g.append(e)}}
+      }else $("cd").textContent="";
     }
-    if(!items.length)continue;
-    const h=document.createElement("h2");h.textContent=grp.title;
-    const d=document.createElement("div");d.className="grp";d.append(...items);
-    box.append(h,d);
+    // ---- カテゴリ別リンク ----
+    box.textContent="";
+    const eg=(lang==="en"&&c.en&&c.en.groups)||[];
+    c.groups.forEach((grp,gi)=>{
+      const items=[];
+      grp.links.forEach((l,li)=>{
+        let el,label=l.label,desc=(eg[gi]&&eg[gi].descs[li])||l.desc||"";
+        if(l.type==="mail"){
+          const m=c.mail;if(!(m&&m.b64&&c._open!==false))return;  // 停止中・未設定は非表示
+          el=document.createElement("button");el.type="button";label=L.mail;
+          el.onclick=()=>{location.href="mailto:"+atob(m.b64)+"?subject="+encodeURIComponent(m.subject||"")};
+        }else{
+          el=document.createElement("a");el.href=l.url;el.target="_blank";el.rel="noopener noreferrer me";
+        }
+        el.innerHTML="<span><b></b><small></small></span>";
+        el.querySelector("b").textContent=label;el.querySelector("small").textContent=desc;
+        items.push(el);
+      });
+      if(!items.length)return;
+      const h=document.createElement("h2");h.textContent=(eg[gi]&&eg[gi].title)||grp.title;
+      const d=document.createElement("div");d.className="grp";d.append(...items);
+      box.append(h,d);
+    });
+    document.querySelectorAll("[data-lang]").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.lang===lang)));
   }
+  document.querySelectorAll("[data-lang]").forEach(x=>x.onclick=()=>{
+    if(lang===x.dataset.lang)return;lang=x.dataset.lang;try{localStorage.lang=lang}catch(e){}render()});
+  render();
 
   // ---- 矢印キーでメニュー選択 ----
   addEventListener("keydown",e=>{

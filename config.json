@@ -13,21 +13,23 @@
   "icon": "icon.jpg",
   "talk": [
     "絵を描き始めたのは、コロナの影響で時間ができたからです。",
-    "ドット絵を始めたのは、フリーゲームを作りたかったからです。その一環でした。",
+    "ドット絵は、フリーゲームを作りたくて始めました。",
     "最初に描いたのは、四角や丸のような単純な形でした。",
     "ドット絵はAseprite、イラストはクリップスタジオで描いています。",
     "人から教わるのが苦手なので、絵はすべて独学です。",
     "ずっと昔からケモノキャラが好きだったので、描くのも自然とそうなりました。",
     "好きなのは、基本的には牛や馬など、草食動物のキャラクターです。",
-    "BESTIAWORKSという名前は、ラテン語の辞書を見ていて、Bestiaが「獣」だと知ったのが由来です。",
+    "BESTIAWORKSは、ラテン語の辞書で見つけた「Bestia(獣)」が由来です。",
     "描くときは、荒々しさがタッチとして残るように意識しています。",
-    "制作時間の目安は、イラスト1枚で6〜8時間、漫画1ページで4時間です。5秒のドット絵アニメーションだと、30時間ほどかかります。",
-    "作業中は音楽を聴かず、飲み物は水です。エナジードリンクのような刺激物は苦手です。",
-    "一番楽しいのは、上手く見えないラフを塗り込んでいるうちに、いつの間にか形になっている瞬間です。逆につらいのは、その下手なラフを描いている時間です。",
-    "短時間で遊べるゲームを、つい やり込んでしまいます。最近はDownwellです。",
-    "同人誌を作り始めたのは、ハマっていたジャンルで本を出している方を見かけて、その真似をしたのがきっかけです。",
-    "依頼では、人が好きなものは全部描きたいと思っています。苦手なものは特にありません。",
-    "依頼の完了後に、依頼料を上乗せしていただいたり、DMで感謝の言葉をいただいたりすると、とても嬉しいです。",
+    "制作時間は、イラスト1枚で6〜8時間、漫画1ページで4時間です。",
+    "5秒のドット絵アニメーションは、30時間ほどかかります。",
+    "作業中は音楽を聴かず、飲み物は水です。刺激物は苦手です。",
+    "一番楽しいのは、ラフを塗り込むうちに、いつの間にか形になる瞬間です。",
+    "逆につらいのは、下手なラフを描いている時間です。",
+    "短時間で遊べるゲームを、つい やり込みます。最近はDownwellです。",
+    "同人誌は、本を出している方を見かけて、真似をしたのが始まりです。",
+    "依頼は、人が好きなものは全部描きたいです。苦手なものはありません。",
+    "依頼のあとに、依頼料の上乗せや感謝のDMをいただくと嬉しいです。",
     "好きな食べ物はカレーで、週に3回は食べています。",
     "休日は、ひたすら創作をして過ごしています。",
     "今後の目標は、制作中のゲームをいよいよ完成させることです。",
@@ -95,5 +97,63 @@
       ]
     }
   ],
-  "brand": "BESTIAWORKS"
+  "brand": "BESTIAWORKS",
+  "en": {
+    "name": "Riotaro",
+    "tagline": "- Scenario Writer\n- Pixel Artist\n- Illustrator",
+    "talk": [
+      "I started drawing because COVID gave me free time.",
+      "I started pixel art because I wanted to make a free game.",
+      "The first things I drew were simple shapes, like squares and circles.",
+      "I draw pixel art in Aseprite and illustrations in Clip Studio Paint.",
+      "I'm bad at learning from others, so I'm entirely self-taught.",
+      "I've loved furry characters for ages, so drawing them came naturally.",
+      "I mostly like herbivore characters, such as cows and horses.",
+      "The name comes from \"Bestia\", Latin for beast, found in a dictionary.",
+      "I try to keep a rough, wild touch in my strokes.",
+      "An illustration takes 6-8 hours, and a manga page takes 4 hours.",
+      "A 5-second pixel animation takes about 30 hours.",
+      "No music while I work. I drink water and avoid stimulants.",
+      "Best moment: a rough I keep painting suddenly turns into art.",
+      "The hardest part is drawing that clumsy rough sketch.",
+      "I get hooked on short games. Lately it's Downwell.",
+      "I made my first book by copying a creator in a genre I loved.",
+      "For commissions, I want to draw whatever people love.",
+      "I'm really happy when I get a tip or a thank-you DM after a commission.",
+      "I love curry. I eat it three times a week.",
+      "On days off, I just create things all day.",
+      "My goal is to finally finish the game I'm making.",
+      "I'm a real night owl, often drawing until dawn."
+    ],
+    "groups": [
+      {
+        "title": "SNS",
+        "descs": [
+          "Daily posts & announcements",
+          "Daily posts & announcements (sub)"
+        ]
+      },
+      {
+        "title": "SHOP / WORKS",
+        "descs": [
+          "Goods & works shop",
+          "Books & collections"
+        ]
+      },
+      {
+        "title": "COMMISSION",
+        "descs": [
+          "Paid illustration requests",
+          "Contact by email"
+        ]
+      },
+      {
+        "title": "SUPPORT",
+        "descs": [
+          "Support & exclusive posts",
+          "Send an anonymous message"
+        ]
+      }
+    ]
+  }
 }
