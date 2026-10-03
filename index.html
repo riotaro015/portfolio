@@ -50,7 +50,7 @@ h2::before{content:"■ "}
 .grp a:hover small,.grp a:focus-visible small,.grp button:hover small,.grp button:focus-visible small{color:var(--text)}
 .grp button{border-style:dashed}
 footer{margin-top:18px;text-align:center;color:var(--dim);font-size:12px}
-.opt{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;font-size:12px}
+.opt{display:flex;align-items:center;gap:6px;margin-top:0;font-size:13px}
 .opt span:first-child{color:var(--hi);margin-right:6px}
 .opt button{padding:2px 12px;border:2px solid var(--line);background:transparent;color:var(--dim);font:inherit;cursor:pointer}
 .opt button[aria-pressed=true]{background:var(--hi);border-color:var(--hi);color:var(--bg)}
@@ -62,13 +62,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
   background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.35))}
 .nocrt body::after{display:none}
 .bar{display:flex;justify-content:space-between;margin:-20px -18px 16px;padding:2px 10px;background:var(--line);color:var(--bg);font-size:12px;letter-spacing:.08em}
-.rt{display:flex;align-items:center;gap:12px}
-.lang{display:flex;gap:2px;align-items:center}.lang i{font-style:normal;margin-right:4px}
-.lang button{padding:0 6px;border:1px solid var(--bg);background:transparent;color:var(--bg);font:inherit;line-height:1.5;cursor:pointer}
-.lang button[aria-pressed=true],.lang button[aria-pressed=true]{background:var(--bg);color:var(--line)}
-.lang button:hover,.lang button:focus-visible{outline:0;background:var(--hi);border-color:var(--hi)}
-.lang button[aria-pressed=true]:hover,.lang button[aria-pressed=true]:focus-visible{color:var(--bg)}
-@media (max-width:380px){#clock{display:none}}
+.opts{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px 18px;margin-bottom:14px}
 .win.go{animation:on .45s steps(6)}
 @keyframes on{from{transform:scaleY(.02);filter:brightness(2.5)}60%{transform:scaleY(1.02);filter:brightness(1.4)}to{transform:none;filter:none}}
 #boot{display:none;position:fixed;inset:0;z-index:100;background:#0d0e18;color:var(--open);padding:24px;cursor:pointer}
@@ -77,8 +71,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
 .grp a:hover::before,.grp button:hover::before,.grp a:focus-visible::before,.grp button:focus-visible::before{animation:cur .5s steps(2) infinite}
 @keyframes cur{50%{transform:translateX(3px)}}
 @media (min-width:860px){
-  .win{max-width:880px;padding:28px 32px;display:grid;grid-template-columns:320px 1fr;grid-template-areas:"t t" "h l" "b l" "e l" "f f";column-gap:36px;align-content:start}
-  header{grid-area:h;margin-bottom:0}.bar{grid-area:t;margin:-28px -32px 24px}.badge{grid-area:b}#links{grid-area:l;margin-top:-16px}#err{grid-area:e}footer{grid-area:f}
+  .win{max-width:880px;padding:28px 32px;display:grid;grid-template-columns:320px 1fr;grid-template-areas:"t t" "o o" "h l" "b l" "e l" "f f";column-gap:36px;align-content:start}
+  header{grid-area:h;margin-bottom:0}.opts{grid-area:o}.bar{grid-area:t;margin:-28px -32px 24px}.badge{grid-area:b}#links{grid-area:l;margin-top:-16px}#err{grid-area:e}footer{grid-area:f}
   #icon{width:192px;height:192px}h1{font-size:26px}.say{font-size:15px}
   .grp{grid-template-columns:1fr 1fr}
 }
@@ -88,7 +82,11 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
 <body>
 <div id="boot"><pre></pre></div>
 <main class="win">
-  <div class="bar"><span>RIOTARO.EXE</span><span class="rt"><span class="lang" role="group" aria-label="Language"><button type="button" data-lang="ja">JA</button><button type="button" data-lang="en">EN</button></span><span class="lang" role="group" aria-label="CRT"><i>CRT</i><button type="button" data-crt="1">ON</button><button type="button" data-crt="0">OFF</button></span><span id="clock">PLAY 00:00</span></span></div>
+  <div class="bar"><span>RIOTARO.EXE</span><span id="clock">PLAY 00:00</span></div>
+  <div class="opts">
+    <div class="opt" role="group" aria-label="Language"><span>LANGUAGE</span><button type="button" data-lang="ja">日本語</button><button type="button" data-lang="en">ENGLISH</button></div>
+    <div class="opt" role="group" aria-label="CRT"><span>CRT</span><button type="button" data-crt="1">ON</button><button type="button" data-crt="0">OFF</button></div>
+  </div>
   <header>
     <img id="icon" src="icon.jpg" width="128" height="128" alt="BESTIAWORKS アイコン (クリックで話しかけられます)">
     <h1 id="name">&nbsp;</h1>
