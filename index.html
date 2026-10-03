@@ -62,6 +62,13 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
   background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.35))}
 .nocrt body::after{display:none}
 .bar{display:flex;justify-content:space-between;margin:-20px -18px 16px;padding:2px 10px;background:var(--line);color:var(--bg);font-size:12px;letter-spacing:.08em}
+.rt{display:flex;align-items:center;gap:12px}
+.lang{display:flex;gap:2px}
+.lang button{padding:0 8px;border:1px solid var(--bg);background:transparent;color:var(--bg);font:inherit;line-height:1.5;cursor:pointer}
+.lang button[aria-pressed=true]{background:var(--bg);color:var(--line)}
+.lang button:hover,.lang button:focus-visible{outline:0;background:var(--hi);border-color:var(--hi)}
+.lang button[aria-pressed=true]:hover,.lang button[aria-pressed=true]:focus-visible{color:var(--bg)}
+@media (max-width:380px){#clock{display:none}}
 .win.go{animation:on .45s steps(6)}
 @keyframes on{from{transform:scaleY(.02);filter:brightness(2.5)}60%{transform:scaleY(1.02);filter:brightness(1.4)}to{transform:none;filter:none}}
 #boot{display:none;position:fixed;inset:0;z-index:100;background:#0d0e18;color:var(--open);padding:24px;cursor:pointer}
@@ -81,7 +88,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
 <body>
 <div id="boot"><pre></pre></div>
 <main class="win">
-  <div class="bar"><span>RIOTARO.EXE</span><span id="clock">PLAY 00:00</span></div>
+  <div class="bar"><span>RIOTARO.EXE</span><span class="rt"><span class="lang" role="group" aria-label="Language"><button type="button" data-lang="ja">JA</button><button type="button" data-lang="en">EN</button></span><span id="clock">PLAY 00:00</span></span></div>
   <header>
     <img id="icon" src="icon.jpg" width="128" height="128" alt="BESTIAWORKS アイコン (クリックで話しかけられます)">
     <h1 id="name">&nbsp;</h1>
@@ -95,8 +102,6 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
   <div id="links"></div>
   <p id="err"></p>
   <footer>&copy; <span id="year"></span> <span id="foot"></span>
-    <div class="opt" role="group" aria-label="Language"><span>LANG</span>
-      <button type="button" data-lang="ja">日本語</button><button type="button" data-lang="en">ENGLISH</button></div>
     <div class="opt" role="group" aria-label="CRT"><span>CRT</span>
       <button type="button" data-crt="1">ON</button><button type="button" data-crt="0">OFF</button></div>
   </footer>
