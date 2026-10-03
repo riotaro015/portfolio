@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BESTIAWORKS</title>
+<meta name="description" content="BESTIAWORKS のリンクまとめ">
+<link rel="icon" href="icon.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a1c2c;--win:#262b54;--line:#f4f4f4;--text:#f4f4f4;--dim:#9aa3d6;--hi:#ffcd75;--open:#38b764;--ltd:#ffcd75;--closed:#b13e53}
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;display:grid;place-items:center;padding:20px 16px;background:var(--bg);color:var(--text);
+  font:16px/1.6 "DotGothic16",ui-monospace,monospace}
+.win{width:100%;max-width:400px;background:var(--win);padding:20px 18px;
+  box-shadow:0 -4px 0 0 var(--line),0 4px 0 0 var(--line),-4px 0 0 0 var(--line),4px 0 0 0 var(--line),8px 8px 0 0 #0d0e18}
+header{text-align:center;margin-bottom:14px;position:relative}
+#icon{width:128px;height:128px;image-rendering:pixelated;display:block;margin:0 auto 10px;box-shadow:0 0 0 4px var(--line);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+#icon.hop{animation:hop .4s steps(4)}
+@keyframes hop{30%{transform:translateY(-14px)}60%{transform:translateY(0)}80%{transform:translateY(-5px)}}
+h1{font-size:22px;letter-spacing:.08em;font-weight:400}
+.say{min-height:2.7em;margin-top:8px;padding:6px 10px;border:2px solid var(--line);background:#1a1c2c;font-size:14px;text-align:left}
+.say::after{content:"▼";float:right;color:var(--hi);animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:0}}
+.badge{margin:14px 0;padding:8px 10px;border:2px solid var(--line);font-size:14px;text-align:center}
+.badge .st{display:flex;align-items:center;justify-content:center;gap:8px}
+.dot{width:10px;height:10px;background:var(--c);flex:none}
+.badge[data-s=open]{--c:var(--open)}.badge[data-s=limited]{--c:var(--ltd)}.badge[data-s=closed]{--c:var(--closed)}
+.cd{margin-top:2px;color:var(--hi)}.cd b{font-size:20px;font-weight:400}
+.gauge{display:flex;gap:2px;margin-top:6px}.gauge i{flex:1;height:8px;background:#1a1c2c}.gauge i.on{background:var(--hi)}
+h2{margin:16px 0 6px;font-size:12px;font-weight:400;color:var(--hi);letter-spacing:.1em}
+h2::before{content:"■ "}
+.grp{display:grid;gap:8px}
+.grp a,.grp button{display:flex;align-items:center;width:100%;padding:8px 12px;border:2px solid var(--line);background:transparent;color:inherit;
+  font:inherit;text-decoration:none;cursor:pointer;text-align:left}
+.grp a::before,.grp button::before{content:"";width:12px;height:12px;margin-right:10px;flex:none;background:var(--hi);clip-path:polygon(0 0,100% 50%,0 100%);visibility:hidden}
+.grp a:hover,.grp a:focus-visible,.grp button:hover,.grp button:focus-visible{outline:0;background:#353b7a;color:var(--hi)}
+.grp a:hover::before,.grp a:focus-visible::before,.grp button:hover::before,.grp button:focus-visible::before{visibility:visible}
+.grp b{display:block;font-weight:400}
+.grp small{display:block;color:var(--dim);font-size:12px;line-height:1.3}
+.grp a:hover small,.grp a:focus-visible small,.grp button:hover small,.grp button:focus-visible small{color:var(--text)}
+.grp button{border-style:dashed}
+footer{margin-top:18px;text-align:center;color:var(--dim);font-size:12px}
+#snd{background:none;border:0;color:var(--dim);font:inherit;cursor:pointer}
+#err{color:var(--closed);text-align:center}
+@media (prefers-reduced-motion:reduce){#icon.hop,.say::after{animation:none}}
+</style>
+</head>
+<body>
+<main class="win">
+  <header>
+    <img id="icon" src="icon.jpg" width="128" height="128" alt="BESTIAWORKS アイコン (クリックで話しかけられます)">
+    <h1 id="name">&nbsp;</h1>
+    <p class="say" id="say" aria-live="polite"></p>
+  </header>
+  <div class="badge" id="badge" data-s="closed" hidden>
+    <div class="st"><i class="dot"></i><span id="stText"></span></div>
+    <div class="cd" id="cd"></div>
+    <div class="gauge" id="gauge" hidden></div>
+  </div>
+  <div id="links"></div>
+  <p id="err"></p>
+  <footer>&copy; <span id="year"></span> <span id="foot"></span> <button id="snd" type="button" aria-pressed="false">♪ OFF</button></footer>
+</main>
+<script>
+(async()=>{
+  const $=id=>document.getElementById(id);
+  let c;
+  try{c=await (await fetch("config.json",{cache:"no-cache"})).json()}
+  catch(e){$("err").textContent="config.json を読めません (サーバー経由で開いてください)";return}
+
+  $("name").textContent=c.name;document.title=c.name;
+  $("foot").textContent=c.name;$("year").textContent=new Date().getFullYear();
+  if(c.icon)$("icon").src=c.icon;
+
+  // ---- 効果音 (WebAudio矩形波, 初期OFF) ----
+  let ctx,on=false;
+  const beep=(f=660,d=.05)=>{if(!on)return;ctx=ctx||new AudioContext();const o=ctx.createOscillator(),g=ctx.createGain();
+    o.type="square";o.frequency.value=f;g.gain.value=.04;o.connect(g).connect(ctx.destination);o.start();o.stop(ctx.currentTime+d)};
+  $("snd").onclick=e=>{on=!on;e.target.textContent="♪ "+(on?"ON":"OFF");e.target.setAttribute("aria-pressed",on);beep(880,.08)};
+
+  // ---- 会話ウィンドウ(タイプライター) ----
+  const say=$("say");let tm,full=c.tagline||"";
+  const type=t=>{clearInterval(tm);say.firstChild&&(say.textContent="");let i=0;
+    tm=setInterval(()=>{say.textContent=t.slice(0,++i);if(i%2)beep(520,.02);if(i>=t.length)clearInterval(tm)},45)};
+  type(full);
+
+  // ---- アイコン: クリックで跳ねて話す ----
+  const ic=$("icon");let bag=[];
+  ic.onclick=()=>{ic.classList.remove("hop");void ic.offsetWidth;ic.classList.add("hop");
+    beep(784,.07);
+    if(c.talk&&c.talk.length){if(!bag.length)bag=c.talk.map((_,i)=>i).sort(()=>Math.random()-.5);type(c.talk[bag.pop()])}};
+
+
+  // ---- コミッション状態 + カウントダウン ----
+  const co=c.commission;
+  if(co){
+    const JST=d=>new Date(d+"T00:00:00+09:00"),now=Date.now();
+    let s=co.status;
+    if(s==="closed"&&co.reopen&&now>=JST(co.reopen))s="open";  // 再開日を過ぎたら自動で受付中表示
+    const b=$("badge");b.hidden=false;b.dataset.s=s;
+    $("stText").textContent="COMMISSION: "+({open:"受付中",limited:"少数のみ受付",closed:"停止中"}[s]||s)+(co.note?"  "+co.note:"");
+    if(s==="closed"&&co.reopen){
+      const t=JST(co.reopen),days=Math.ceil((t-now)/864e5),dd=co.reopen.replace(/-/g,"/");
+      $("cd").innerHTML="受付再開まで あと <b>"+days+"</b> 日 ("+dd+")";
+      if(co.since){const a=JST(co.since),r=Math.min(1,Math.max(0,(now-a)/(t-a))),g=$("gauge");g.hidden=false;
+        for(let i=0;i<20;i++){const e=document.createElement("i");if(i<Math.round(r*20))e.className="on";g.append(e)}}
+    }
+    c._open=s!=="closed";
+  }
+
+  // ---- カテゴリ別リンク ----
+  const box=$("links");
+  for(const grp of c.groups){
+    const items=[];
+    for(const l of grp.links){
+      let el;
+      if(l.type==="mail"){
+        const m=c.mail;if(!(m&&m.user&&m.domain&&c._open!==false))continue;  // 停止中・未設定は非表示
+        el=document.createElement("button");el.type="button";
+        el.onclick=()=>{location.href="mailto:"+m.user+"@"+m.domain+"?subject="+encodeURIComponent(m.subject||"")};
+      }else{
+        el=document.createElement("a");el.href=l.url;el.target="_blank";el.rel="noopener noreferrer me";
+      }
+      el.innerHTML="<span><b></b><small></small></span>";
+      el.querySelector("b").textContent=l.label;el.querySelector("small").textContent=l.desc||"";
+      el.addEventListener("mouseenter",()=>beep(660,.03));
+      el.addEventListener("click",()=>beep(990,.08));
+      items.push(el);
+    }
+    if(!items.length)continue;
+    const h=document.createElement("h2");h.textContent=grp.title;
+    const d=document.createElement("div");d.className="grp";d.append(...items);
+    box.append(h,d);
+  }
+
+  // ---- 矢印キーでメニュー選択 ----
+  addEventListener("keydown",e=>{
+    if(e.key!=="ArrowDown"&&e.key!=="ArrowUp")return;
+    const f=[...box.querySelectorAll("a,button")],i=f.indexOf(document.activeElement);
+    f[(i+(e.key==="ArrowDown"?1:-1)+f.length)%f.length].focus();beep(740,.03);e.preventDefault();
+  });
+})();
+</script>
+</body>
+</html>
