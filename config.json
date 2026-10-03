@@ -42,12 +42,14 @@
         {
           "label": "X",
           "url": "https://x.com/Riotaro15",
-          "desc": "日常・告知はこちら"
+          "desc": "日常・告知はこちら",
+          "favicon": "ico/x.png"
         },
         {
           "label": "Bluesky",
           "url": "https://bsky.app/profile/riotaro15.bsky.social",
-          "desc": "日常・告知(サブ)"
+          "desc": "日常・告知(サブ)",
+          "favicon": "ico/bluesky.png"
         }
       ]
     },
@@ -57,12 +59,14 @@
         {
           "label": "Booth",
           "url": "https://riotarofurry.booth.pm/",
-          "desc": "グッズ・作品の通販"
+          "desc": "グッズ・作品の通販",
+          "favicon": "ico/booth.png"
         },
         {
           "label": "AliceBooks",
           "url": "https://alice-books.com/item/list/all?tag=%E3%82%8A%E3%81%8A%E3%81%9F%E3%82%8D",
-          "desc": "同人誌・作品集の頒布"
+          "desc": "同人誌・作品集の頒布",
+          "favicon": "ico/alicebooks.png"
         }
       ]
     },
@@ -72,12 +76,14 @@
         {
           "label": "Skeb",
           "url": "https://skeb.jp/@Riotaro15",
-          "desc": "イラストの有償依頼"
+          "desc": "イラストの有償依頼",
+          "favicon": "ico/skeb.png"
         },
         {
           "label": "メールで依頼する",
           "type": "mail",
-          "desc": "メールで直接ご相談"
+          "desc": "メールで直接ご相談",
+          "favicon": "ico/mail.png"
         }
       ]
     },
@@ -87,12 +93,14 @@
         {
           "label": "FANBOX",
           "url": "https://riotaro.fanbox.cc/",
-          "desc": "支援・限定公開"
+          "desc": "支援・限定公開",
+          "favicon": "ico/fanbox.png"
         },
         {
           "label": "WaveBox",
           "url": "https://wavebox.me/wave/1bi1nmw6vppyi0s9/",
-          "desc": "匿名で感想・メッセージ"
+          "desc": "匿名で感想・メッセージ",
+          "favicon": "ico/wavebox.png"
         }
       ]
     }
