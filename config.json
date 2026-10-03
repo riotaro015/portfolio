@@ -184,7 +184,8 @@
       "status": "absent",
       "en": {
         "venue": "Tokyo Ryutsu Center (TRC)"
-      }
+      },
+      "url": "https://skypalette.jp/kemoket/"
     },
     {
       "name": "ヤりすぎ！雄伝説",
@@ -205,7 +206,8 @@
       "status": "planned",
       "en": {
         "venue": "INTEX Osaka"
-      }
+      },
+      "url": "https://skypalette.jp/kemoket/"
     }
   ]
 }
