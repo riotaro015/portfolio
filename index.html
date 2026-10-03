@@ -29,6 +29,10 @@ header{text-align:center;margin-bottom:26px;position:relative}
 @keyframes hop{30%{transform:translateY(-14px)}60%{transform:translateY(0)}80%{transform:translateY(-5px)}}
 h1{font-size:22px;letter-spacing:.08em;font-weight:400}
 .say{white-space:pre-wrap;min-height:calc(6.4em + 24px);margin-top:14px;padding:10px 12px;border:2px solid var(--line);background:#1a1c2c;font-size:14px;text-align:left}
+.talk{display:block;margin:12px auto 0;padding:8px 20px;border:2px solid var(--hi);background:transparent;color:var(--hi);font:inherit;font-size:14px;cursor:pointer}
+.talk:hover,.talk:focus-visible{outline:0;background:var(--hi);color:var(--bg)}
+.talk::first-letter{animation:cur .5s steps(2) infinite}
+#icon:hover{filter:brightness(1.15)}
 .say::after{content:"▼";float:right;color:var(--hi);animation:bl 1s steps(2) infinite}
 @keyframes bl{50%{opacity:0}}
 .badge{margin:26px 0;padding:14px 12px;border:2px solid var(--line);font-size:14px;text-align:center}
@@ -123,6 +127,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
     <img id="icon" src="icon.jpg" width="128" height="128" alt="BESTIAWORKS アイコン (クリックで話しかけられます)">
     <h1 id="name">&nbsp;</h1>
     <p class="say" id="say" aria-live="polite"></p>
+    <button type="button" class="talk" id="talk"></button>
   </header>
   <div class="badge" id="badge" data-s="closed" hidden>
     <div class="st"><i class="dot"></i><span id="stText"></span></div>
@@ -150,8 +155,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
   catch(e){$("err").textContent="config.json を読めません (サーバー経由で開いてください)";return}
 
   const T={
-    ja:{open:"受付中",limited:"少数のみ受付",closed:"停止中",mail:"メールで依頼する",cd:(n,d)=>"受付再開まで あと <b>"+n+"</b> 日 ("+d+")",alt:"アイコン (クリックで話しかけられます)",ev:{confirmed:"参加確定",planned:"参加予定",absent:"不参加",space:"スペース",left:n=>n<=0?"本日開催!":"あと "+n+" 日",wd:"ja-JP"}},
-    en:{open:"OPEN",limited:"LIMITED",closed:"CLOSED",mail:"Request by email",cd:(n,d)=>"Reopens in <b>"+n+"</b> day"+(n===1?"":"s")+" ("+d+")",alt:"icon (click to talk)",ev:{confirmed:"CONFIRMED",planned:"PLANNED",absent:"NOT ATTENDING",space:"Booth",left:n=>n<=0?"Today!":"in "+n+" day"+(n===1?"":"s"),wd:"en-US"}}
+    ja:{open:"受付中",limited:"少数のみ受付",closed:"停止中",mail:"メールで依頼する",cd:(n,d)=>"受付再開まで あと <b>"+n+"</b> 日 ("+d+")",alt:"アイコン (クリックで話しかけられます)",talk:["▶ 話しかける","▶ もっと話す"],ev:{confirmed:"参加確定",planned:"参加予定",absent:"不参加",space:"スペース",left:n=>n<=0?"本日開催!":"あと "+n+" 日",wd:"ja-JP"}},
+    en:{open:"OPEN",limited:"LIMITED",closed:"CLOSED",mail:"Request by email",cd:(n,d)=>"Reopens in <b>"+n+"</b> day"+(n===1?"":"s")+" ("+d+")",alt:"icon (click to talk)",talk:["▶ TALK","▶ MORE"],ev:{confirmed:"CONFIRMED",planned:"PLANNED",absent:"NOT ATTENDING",space:"Booth",left:n=>n<=0?"Today!":"in "+n+" day"+(n===1?"":"s"),wd:"en-US"}}
   };
   const guess=(navigator.language||"").slice(0,2)==="ja"?"ja":"en";
   let lang=guess;
@@ -168,10 +173,12 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
     tm=setInterval(()=>{say.textContent=t.slice(0,++i);if(i>=t.length)clearInterval(tm)},45)};
 
   // ---- アイコン: クリックで跳ねて話す ----
-  const ic=$("icon");let bag=[];
-  ic.onclick=()=>{ic.classList.remove("hop");void ic.offsetWidth;ic.classList.add("hop");
+  const ic=$("icon");let bag=[],talked=false;
+  const lbl=()=>{$("talk").textContent=T[lang].talk[talked?1:0]};
+  const talk_=()=>{talked=true;lbl();ic.classList.remove("hop");void ic.offsetWidth;ic.classList.add("hop");
     const talk=tx("talk",[]);
     if(talk.length){if(!bag.length)bag=talk.map((_,i)=>i).sort(()=>Math.random()-.5);type(talk[bag.pop()])}};
+  ic.onclick=talk_;$("talk").onclick=talk_;
 
   // ---- コミッション状態 (日付計算は言語に依らない) ----
   const co=c.commission,JST=d=>new Date(d+"T00:00:00+09:00"),now=Date.now(),today=JST(new Date().toLocaleDateString("sv-SE",{timeZone:"Asia/Tokyo"}));
@@ -184,7 +191,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
     const L=T[lang];
     document.documentElement.lang=lang;
     $("name").textContent=tx("name");$("icon").alt=(c.brand||c.name)+" "+L.alt;
-    type(tx("tagline",""));bag=[];
+    type(tx("tagline",""));bag=[];lbl();
     if(co){
       const b=$("badge");b.hidden=false;b.dataset.s=st;
       $("stText").textContent="COMMISSION: "+(L[st]||st)+(co.note?"  "+co.note:"");
