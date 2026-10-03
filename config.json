@@ -7,8 +7,7 @@
     "since": "2026-10-03"
   },
   "mail": {
-    "user": "",
-    "domain": "",
+    "b64": "cmlvdGFyb3dvcmtzQGdtYWlsLmNvbQ==",
     "subject": "コミッションの依頼"
   },
   "icon": "icon.jpg",

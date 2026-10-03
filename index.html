@@ -124,9 +124,9 @@ footer{margin-top:18px;text-align:center;color:var(--dim);font-size:12px}
     for(const l of grp.links){
       let el;
       if(l.type==="mail"){
-        const m=c.mail;if(!(m&&m.user&&m.domain&&c._open!==false))continue;  // 停止中・未設定は非表示
+        const m=c.mail;if(!(m&&m.b64&&c._open!==false))continue;  // 停止中・未設定は非表示
         el=document.createElement("button");el.type="button";
-        el.onclick=()=>{location.href="mailto:"+m.user+"@"+m.domain+"?subject="+encodeURIComponent(m.subject||"")};
+        el.onclick=()=>{location.href="mailto:"+atob(m.b64)+"?subject="+encodeURIComponent(m.subject||"")};
       }else{
         el=document.createElement("a");el.href=l.url;el.target="_blank";el.rel="noopener noreferrer me";
       }
