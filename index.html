@@ -18,7 +18,7 @@
 <style>
 :root{--bg:#1a1c2c;--win:#262b54;--line:#f4f4f4;--text:#f4f4f4;--dim:#9aa3d6;--hi:#ffcd75;--open:#38b764;--ltd:#ffcd75;--closed:#b13e53}
 *{box-sizing:border-box;margin:0}
-body{min-height:100vh;display:grid;place-items:center;padding:20px 16px;background:var(--bg);color:var(--text);
+body{min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr);place-items:center;padding:20px 16px;background:var(--bg);color:var(--text);
   font:16px/1.6 "DotGothic16",ui-monospace,monospace}
 .win{width:100%;max-width:400px;background:var(--win);padding:20px 18px;
   box-shadow:0 -4px 0 0 var(--line),0 4px 0 0 var(--line),-4px 0 0 0 var(--line),4px 0 0 0 var(--line),8px 8px 0 0 #0d0e18}
@@ -51,6 +51,12 @@ h2::before{content:"■ "}
 footer{margin-top:18px;text-align:center;color:var(--dim);font-size:12px}
 #snd{background:none;border:0;color:var(--dim);font:inherit;cursor:pointer}
 #err{color:var(--closed);text-align:center}
+@media (min-width:860px){
+  .win{max-width:880px;padding:28px 32px;display:grid;grid-template-columns:320px 1fr;grid-template-areas:"h l" "b l" "e l" "f f";column-gap:36px;align-content:start}
+  header{grid-area:h;margin-bottom:0}.badge{grid-area:b}#links{grid-area:l;margin-top:-16px}#err{grid-area:e}footer{grid-area:f}
+  #icon{width:192px;height:192px}h1{font-size:26px}.say{font-size:15px}
+  .grp{grid-template-columns:1fr 1fr}
+}
 @media (prefers-reduced-motion:reduce){#icon.hop,.say::after{animation:none}}
 </style>
 </head>
