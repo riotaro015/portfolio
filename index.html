@@ -234,7 +234,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
       grp.links.forEach((l,li)=>{
         let el,label=l.label,desc=(eg[gi]&&eg[gi].descs[li])||l.desc||"";
         if(l.type==="mail"){
-          const m=c.mail;if(!(m&&m.b64&&c._open!==false))return;  // 停止中・未設定は非表示
+          const m=c.mail;if(!(m&&m.b64))return;  // 未設定のときだけ非表示
           el=document.createElement("button");el.type="button";label=L.mail;
           el.onclick=()=>{location.href="mailto:"+atob(m.b64)+"?subject="+encodeURIComponent(m.subject||"")};
         }else{
