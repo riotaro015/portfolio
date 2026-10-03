@@ -15,6 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<script>try{var d=document.documentElement;if(!sessionStorage.b&&!matchMedia("(prefers-reduced-motion:reduce)").matches)d.classList.add("boot");if(localStorage.crt==="0")d.classList.add("nocrt")}catch(e){}</script>
 <style>
 :root{--bg:#1a1c2c;--win:#262b54;--line:#f4f4f4;--text:#f4f4f4;--dim:#9aa3d6;--hi:#ffcd75;--open:#38b764;--ltd:#ffcd75;--closed:#b13e53}
 *{box-sizing:border-box;margin:0}
@@ -49,19 +50,33 @@ h2::before{content:"■ "}
 .grp a:hover small,.grp a:focus-visible small,.grp button:hover small,.grp button:focus-visible small{color:var(--text)}
 .grp button{border-style:dashed}
 footer{margin-top:18px;text-align:center;color:var(--dim);font-size:12px}
-#snd{background:none;border:0;color:var(--dim);font:inherit;cursor:pointer}
+#crt{background:none;border:0;color:var(--dim);font:inherit;cursor:pointer}
 #err{color:var(--closed);text-align:center}
+body{background-image:conic-gradient(#20233a 25%,transparent 0 50%,#20233a 0 75%,transparent 0);background-size:8px 8px}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.35))}
+.nocrt body::after{display:none}
+.bar{display:flex;justify-content:space-between;margin:-20px -18px 16px;padding:2px 10px;background:var(--line);color:var(--bg);font-size:12px;letter-spacing:.08em}
+.win.go{animation:on .45s steps(6)}
+@keyframes on{from{transform:scaleY(.02);filter:brightness(2.5)}60%{transform:scaleY(1.02);filter:brightness(1.4)}to{transform:none;filter:none}}
+#boot{display:none;position:fixed;inset:0;z-index:100;background:#0d0e18;color:var(--open);padding:24px;cursor:pointer}
+#boot pre{font:inherit;font-size:14px;line-height:1.8;white-space:pre-wrap}
+.boot #boot{display:block}.boot .win{visibility:hidden}
+.grp a:hover::before,.grp button:hover::before,.grp a:focus-visible::before,.grp button:focus-visible::before{animation:cur .5s steps(2) infinite}
+@keyframes cur{50%{transform:translateX(3px)}}
 @media (min-width:860px){
-  .win{max-width:880px;padding:28px 32px;display:grid;grid-template-columns:320px 1fr;grid-template-areas:"h l" "b l" "e l" "f f";column-gap:36px;align-content:start}
-  header{grid-area:h;margin-bottom:0}.badge{grid-area:b}#links{grid-area:l;margin-top:-16px}#err{grid-area:e}footer{grid-area:f}
+  .win{max-width:880px;padding:28px 32px;display:grid;grid-template-columns:320px 1fr;grid-template-areas:"t t" "h l" "b l" "e l" "f f";column-gap:36px;align-content:start}
+  header{grid-area:h;margin-bottom:0}.bar{grid-area:t;margin:-28px -32px 24px}.badge{grid-area:b}#links{grid-area:l;margin-top:-16px}#err{grid-area:e}footer{grid-area:f}
   #icon{width:192px;height:192px}h1{font-size:26px}.say{font-size:15px}
   .grp{grid-template-columns:1fr 1fr}
 }
-@media (prefers-reduced-motion:reduce){#icon.hop,.say::after{animation:none}}
+@media (prefers-reduced-motion:reduce){#icon.hop,.say::after,.win.go,.grp a:hover::before,.grp button:hover::before{animation:none}}
 </style>
 </head>
 <body>
+<div id="boot"><pre></pre></div>
 <main class="win">
+  <div class="bar"><span>BESTIAWORKS.EXE</span><span id="clock">PLAY 00:00</span></div>
   <header>
     <img id="icon" src="icon.jpg" width="128" height="128" alt="BESTIAWORKS アイコン (クリックで話しかけられます)">
     <h1 id="name">&nbsp;</h1>
@@ -74,7 +89,7 @@ footer{margin-top:18px;text-align:center;color:var(--dim);font-size:12px}
   </div>
   <div id="links"></div>
   <p id="err"></p>
-  <footer>&copy; <span id="year"></span> <span id="foot"></span> <button id="snd" type="button" aria-pressed="false">♪ OFF</button></footer>
+  <footer>&copy; <span id="year"></span> <span id="foot"></span> <button id="crt" type="button" aria-pressed="true">CRT ON</button></footer>
 </main>
 <script>
 (async()=>{
@@ -87,22 +102,15 @@ footer{margin-top:18px;text-align:center;color:var(--dim);font-size:12px}
   $("foot").textContent=c.name;$("year").textContent=new Date().getFullYear();
   if(c.icon)$("icon").src=c.icon;
 
-  // ---- 効果音 (WebAudio矩形波, 初期OFF) ----
-  let ctx,on=false;
-  const beep=(f=660,d=.05)=>{if(!on)return;ctx=ctx||new AudioContext();const o=ctx.createOscillator(),g=ctx.createGain();
-    o.type="square";o.frequency.value=f;g.gain.value=.04;o.connect(g).connect(ctx.destination);o.start();o.stop(ctx.currentTime+d)};
-  $("snd").onclick=e=>{on=!on;e.target.textContent="♪ "+(on?"ON":"OFF");e.target.setAttribute("aria-pressed",on);beep(880,.08)};
-
   // ---- 会話ウィンドウ(タイプライター) ----
   const say=$("say");let tm,full=c.tagline||"";
   const type=t=>{clearInterval(tm);say.firstChild&&(say.textContent="");let i=0;
-    tm=setInterval(()=>{say.textContent=t.slice(0,++i);if(i%2)beep(520,.02);if(i>=t.length)clearInterval(tm)},45)};
+    tm=setInterval(()=>{say.textContent=t.slice(0,++i);if(i>=t.length)clearInterval(tm)},45)};
   type(full);
 
   // ---- アイコン: クリックで跳ねて話す ----
   const ic=$("icon");let bag=[];
   ic.onclick=()=>{ic.classList.remove("hop");void ic.offsetWidth;ic.classList.add("hop");
-    beep(784,.07);
     if(c.talk&&c.talk.length){if(!bag.length)bag=c.talk.map((_,i)=>i).sort(()=>Math.random()-.5);type(c.talk[bag.pop()])}};
 
 
@@ -138,8 +146,6 @@ footer{margin-top:18px;text-align:center;color:var(--dim);font-size:12px}
       }
       el.innerHTML="<span><b></b><small></small></span>";
       el.querySelector("b").textContent=l.label;el.querySelector("small").textContent=l.desc||"";
-      el.addEventListener("mouseenter",()=>beep(660,.03));
-      el.addEventListener("click",()=>beep(990,.08));
       items.push(el);
     }
     if(!items.length)continue;
@@ -152,8 +158,24 @@ footer{margin-top:18px;text-align:center;color:var(--dim);font-size:12px}
   addEventListener("keydown",e=>{
     if(e.key!=="ArrowDown"&&e.key!=="ArrowUp")return;
     const f=[...box.querySelectorAll("a,button")],i=f.indexOf(document.activeElement);
-    f[(i+(e.key==="ArrowDown"?1:-1)+f.length)%f.length].focus();beep(740,.03);e.preventDefault();
+    f[(i+(e.key==="ArrowDown"?1:-1)+f.length)%f.length].focus();e.preventDefault();
   });
+})();
+</script>
+<script>
+(function(){
+  var d=document.documentElement,b=document.getElementById("boot"),w=document.querySelector(".win");
+  function go(){d.classList.remove("boot");w.classList.add("go")}
+  if(d.classList.contains("boot")){
+    var L=["BESTIAWORKS SYSTEM v1.0","CHECKING MEMORY ........ OK","LOADING CONFIG ......... OK","LOADING SPRITES ........ OK","","PRESS ANY KEY"],i=0,pre=b.firstChild,t;
+    var done=function(){clearInterval(t);b.remove();go();try{sessionStorage.b=1}catch(e){}};
+    t=setInterval(function(){pre.textContent+=L[i++]+"\n";if(i>=L.length){clearInterval(t);setTimeout(done,350)}},170);
+    b.onclick=done;addEventListener("keydown",done,{once:true});
+  }else go();
+  var c=document.getElementById("crt"),t0=Date.now(),ck=document.getElementById("clock"),p=function(n){return(n<10?"0":"")+n};
+  c.textContent="CRT "+(d.classList.contains("nocrt")?"OFF":"ON");
+  c.onclick=function(){var off=d.classList.toggle("nocrt");c.textContent="CRT "+(off?"OFF":"ON");c.setAttribute("aria-pressed",!off);try{localStorage.crt=off?"0":"1"}catch(e){}};
+  setInterval(function(){var s=Math.floor((Date.now()-t0)/1000);ck.textContent="PLAY "+p(Math.floor(s/60)%100)+":"+p(s%60)},1000);
 })();
 </script>
 </body>
