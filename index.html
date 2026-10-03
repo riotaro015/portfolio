@@ -45,6 +45,17 @@ h2::before{content:"■ "}
 .grp a::before,.grp button::before{content:"";width:12px;height:12px;margin-right:10px;flex:none;background:var(--hi);clip-path:polygon(0 0,100% 50%,0 100%);visibility:hidden}
 .grp a:hover,.grp a:focus-visible,.grp button:hover,.grp button:focus-visible{outline:0;background:#353b7a;color:var(--hi)}
 .grp a:hover::before,.grp a:focus-visible::before,.grp button:hover::before,.grp button:focus-visible::before{visibility:visible}
+#events{margin-top:16px}#events h2{margin:0 0 6px}
+.ev{display:grid;gap:8px}
+.evc{border:2px solid var(--line);padding:8px 12px;font-size:14px}
+.evc.pl{border-style:dashed}
+.evc a{color:inherit;text-decoration:none}.evc a:hover,.evc a:focus-visible{color:var(--hi);outline:0;text-decoration:underline}
+.evc .n{display:block;margin-bottom:2px}
+.evc small{display:block;color:var(--dim);font-size:12px;line-height:1.5}
+.evc .cd2{color:var(--hi)}
+.tag{display:inline-block;margin-right:6px;padding:0 6px;border:1px solid currentColor;font-size:11px;line-height:1.5;vertical-align:middle}
+.tag.ok{color:var(--open)}.tag.pl{color:var(--hi)}.tag.ad{color:var(--closed)}
+.evx{list-style:none;padding:0;margin-top:8px;font-size:12px;color:var(--dim)}.evx li{margin-top:2px}
 .grp .fav{width:20px;height:20px;margin-right:10px;flex:none;image-rendering:pixelated}
 .grp b{display:block;font-weight:400}
 .grp small{display:block;color:var(--dim);font-size:12px;line-height:1.3}
@@ -73,8 +84,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
 .grp a:hover::before,.grp button:hover::before,.grp a:focus-visible::before,.grp button:focus-visible::before{animation:cur .5s steps(2) infinite}
 @keyframes cur{50%{transform:translateX(3px)}}
 @media (min-width:860px){
-  .win{max-width:880px;padding:28px 32px;display:grid;grid-template-columns:320px 1fr;grid-template-areas:"t t" "o o" "h l" "b l" "e l" "f f";column-gap:36px;align-content:start}
-  header{grid-area:h;margin-bottom:0}.opts{grid-area:o}.bar{grid-area:t;margin:-28px -32px 24px}.badge{grid-area:b}#links{grid-area:l;margin-top:-16px}#err{grid-area:e}footer{grid-area:f}
+  .win{max-width:880px;padding:28px 32px;display:grid;grid-template-columns:320px 1fr;grid-template-areas:"t t" "o o" "h l" "b l" "v l" "e l" "f f";column-gap:36px;align-content:start}
+  header{grid-area:h;margin-bottom:0}.opts{grid-area:o}#events{grid-area:v}.bar{grid-area:t;margin:-28px -32px 24px}.badge{grid-area:b}#links{grid-area:l;margin-top:-16px}#err{grid-area:e}footer{grid-area:f}
   #icon{width:192px;height:192px}h1{font-size:26px}.say{font-size:15px}
   .grp{grid-template-columns:1fr 1fr}
 }
@@ -100,6 +111,11 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
     <div class="cd" id="cd"></div>
     <div class="gauge" id="gauge" hidden></div>
   </div>
+  <section id="events" hidden>
+    <h2 id="evH">EVENT</h2>
+    <div class="ev" id="evBox"></div>
+    <ul class="evx" id="evNo"></ul>
+  </section>
   <div id="links"></div>
   <p id="err"></p>
   <footer>&copy; <span id="year"></span> <span id="foot"></span>
@@ -113,8 +129,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
   catch(e){$("err").textContent="config.json を読めません (サーバー経由で開いてください)";return}
 
   const T={
-    ja:{open:"受付中",limited:"少数のみ受付",closed:"停止中",mail:"メールで依頼する",cd:(n,d)=>"受付再開まで あと <b>"+n+"</b> 日 ("+d+")",alt:"アイコン (クリックで話しかけられます)"},
-    en:{open:"OPEN",limited:"LIMITED",closed:"CLOSED",mail:"Request by email",cd:(n,d)=>"Reopens in <b>"+n+"</b> day"+(n===1?"":"s")+" ("+d+")",alt:"icon (click to talk)"}
+    ja:{open:"受付中",limited:"少数のみ受付",closed:"停止中",mail:"メールで依頼する",cd:(n,d)=>"受付再開まで あと <b>"+n+"</b> 日 ("+d+")",alt:"アイコン (クリックで話しかけられます)",ev:{confirmed:"参加確定",planned:"参加予定",absent:"不参加",space:"スペース",left:n=>n<=0?"本日開催!":"あと "+n+" 日",wd:"ja-JP"}},
+    en:{open:"OPEN",limited:"LIMITED",closed:"CLOSED",mail:"Request by email",cd:(n,d)=>"Reopens in <b>"+n+"</b> day"+(n===1?"":"s")+" ("+d+")",alt:"icon (click to talk)",ev:{confirmed:"CONFIRMED",planned:"PLANNED",absent:"NOT ATTENDING",space:"Booth",left:n=>n<=0?"Today!":"in "+n+" day"+(n===1?"":"s"),wd:"en-US"}}
   };
   const guess=(navigator.language||"").slice(0,2)==="ja"?"ja":"en";
   let lang=guess;
@@ -137,7 +153,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
     if(talk.length){if(!bag.length)bag=talk.map((_,i)=>i).sort(()=>Math.random()-.5);type(talk[bag.pop()])}};
 
   // ---- コミッション状態 (日付計算は言語に依らない) ----
-  const co=c.commission,JST=d=>new Date(d+"T00:00:00+09:00"),now=Date.now();
+  const co=c.commission,JST=d=>new Date(d+"T00:00:00+09:00"),now=Date.now(),today=JST(new Date().toLocaleDateString("sv-SE",{timeZone:"Asia/Tokyo"}));
   let st=co?co.status:"";
   if(co&&st==="closed"&&co.reopen&&now>=JST(co.reopen))st="open";  // 再開日を過ぎたら自動で受付中表示
   c._open=st!=="closed";
@@ -158,6 +174,25 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
         if(co.since&&!g.children.length){const a=JST(co.since),r=Math.min(1,Math.max(0,(now-a)/(t-a)));g.hidden=false;
           for(let i=0;i<20;i++){const e=document.createElement("i");if(i<Math.round(r*20))e.className="on";g.append(e)}}
       }else $("cd").textContent="";
+    }
+    // ---- イベント参加予定 (過去分は自動で非表示) ----
+    const evs=(c.events||[]).filter(e=>JST(e.date)>=today).sort((a,b)=>JST(a.date)-JST(b.date));
+    const evBox=$("evBox"),evNo=$("evNo");evBox.textContent="";evNo.textContent="";
+    $("events").hidden=!evs.length;
+    const E=L.ev,fmt=e=>{const d=JST(e.date),w=d.toLocaleDateString(E.wd,{timeZone:"Asia/Tokyo",weekday:"short"});
+      return e.date.replace(/-/g,"/")+" ("+w+")"},tg=(t,k)=>{const s=document.createElement("span");s.className="tag "+k;s.textContent=t;return s};
+    for(const e of evs){
+      const o=(lang==="en"&&e.en)||{},venue=o.venue||e.venue,left=Math.round((JST(e.date)-today)/864e5);
+      if(e.status==="absent"){
+        const li=document.createElement("li");li.textContent="× "+e.name+"  "+fmt(e)+"  "+venue+"  ("+E.absent+")";evNo.append(li);continue}
+      const card=document.createElement("div");card.className="evc"+(e.status==="planned"?" pl":"");
+      const n=document.createElement("span");n.className="n";
+      n.append(tg(E[e.status]||"",e.status==="confirmed"?"ok":"pl"));if(e.tag)n.append(tg(e.tag,"ad"));
+      if(e.url){const a=document.createElement("a");a.href=e.url;a.target="_blank";a.rel="noopener noreferrer";a.textContent=e.name;n.append(a)}else n.append(e.name);
+      const d1=document.createElement("small"),d2=document.createElement("small");
+      d1.innerHTML="";d1.append(fmt(e)+"  ");const cd=document.createElement("span");cd.className="cd2";cd.textContent=E.left(left);d1.append(cd);
+      d2.textContent=venue+(e.space?"  /  "+E.space+" "+e.space:"");
+      card.append(n,d1,d2);evBox.append(card);
     }
     // ---- カテゴリ別リンク ----
     box.textContent="";

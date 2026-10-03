@@ -163,5 +163,37 @@
         ]
       }
     ]
-  }
+  },
+  "events": [
+    {
+      "name": "野郎フェス2026 -autumn-",
+      "date": "2026-10-31",
+      "venue": "大田区産業プラザPiO",
+      "space": "G-05",
+      "status": "confirmed",
+      "url": "https://yaroufes.info/",
+      "tag": "18+",
+      "en": {
+        "venue": "Ota City Industrial Plaza PiO"
+      }
+    },
+    {
+      "name": "新春けもケット 結",
+      "date": "2027-01-24",
+      "venue": "東京流通センター(TRC)",
+      "status": "absent",
+      "en": {
+        "venue": "Tokyo Ryutsu Center (TRC)"
+      }
+    },
+    {
+      "name": "関西けもケット 12",
+      "date": "2027-04-18",
+      "venue": "インテックス大阪",
+      "status": "planned",
+      "en": {
+        "venue": "INTEX Osaka"
+      }
+    }
+  ]
 }
