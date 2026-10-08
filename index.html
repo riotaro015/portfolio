@@ -66,6 +66,13 @@ h2::before{content:"■ "}
 .tag{display:inline-block;margin-right:6px;padding:0 6px;border:1px solid currentColor;font-size:11px;line-height:1.5;vertical-align:middle}
 .tag.ok{color:var(--open)}.tag.pl{color:var(--hi)}.tag.ad{color:var(--closed)}
 .evx{list-style:none;padding:0;margin-top:14px;line-height:1.7;font-size:12px;color:var(--dim)}.evx li{margin-top:6px}.evx a{color:inherit}.evx a:hover,.evx a:focus-visible{color:var(--hi);outline:0}
+.sitebn{display:block;position:relative;border:3px solid var(--hi);color:var(--text);text-decoration:none;box-shadow:4px 4px 0 0 #0d0e18;overflow:hidden}
+.sitebn img{display:block;width:100%;aspect-ratio:16/7;object-fit:cover;object-position:50% 45%}
+.sitebn .st{display:block;padding:10px 14px;background:#1a1c2c}
+.sitebn b{display:block;font-weight:400;font-size:18px;color:var(--hi);letter-spacing:.06em}
+.sitebn small{display:block;font-size:12px;color:var(--dim);line-height:1.6}
+.sitebn:hover,.sitebn:focus-visible{outline:0}.sitebn:hover .st,.sitebn:focus-visible .st{background:var(--hi)}
+.sitebn:hover b,.sitebn:hover small,.sitebn:focus-visible b,.sitebn:focus-visible small{color:var(--bg)}
 .grp .fav{width:20px;height:20px;margin-right:10px;flex:none;image-rendering:pixelated}
 .grp b{display:block;font-weight:400}
 .grp small{display:block;color:var(--dim);font-size:12px;line-height:1.6;margin-top:2px}
@@ -105,13 +112,15 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
   .ev{grid-template-columns:1fr 1fr}
   #links{display:grid;grid-template-columns:1fr 1fr;column-gap:28px}
   .grp{grid-template-columns:1fr}
+  .cat.site{grid-column:1/-1}
+  .sitebn img{aspect-ratio:16/4}
 }
 @media (min-width:1100px){
   .win{max-width:1240px;grid-template-columns:320px 310px 1fr;grid-template-areas:"t t t" "o o o" "L E K" "e e e" "f f f";column-gap:40px}
   .colR{display:contents}#events{grid-area:E}#links{grid-area:K}
   .ev{grid-template-columns:1fr}
-  #links h2{margin:0 0 10px}.cat+.cat+.cat h2{margin-top:26px}
-  .cat{margin-bottom:0}
+  #links h2{margin:0 0 10px}#links .cat:nth-child(n+4) h2{margin-top:22px}
+  .cat{margin-bottom:0}.cat.site{margin-bottom:22px}
   .grp{gap:10px}.grp a,.grp button{padding:10px 12px}
   .opts{padding-bottom:12px;margin-bottom:22px}
   header{margin-bottom:22px}
@@ -241,6 +250,13 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
     }
     // ---- カテゴリ別リンク ----
     box.textContent="";
+    if(c.site){const S=c.site,o=(lang==="en"&&S.en)||{};
+      const a=document.createElement("a");a.className="sitebn";a.href=S.url;a.target="_blank";a.rel="noopener noreferrer me";
+      a.innerHTML='<img alt="" loading="lazy"><span class="st"><b></b><small></small></span>';
+      a.querySelector("img").src=S.image;
+      a.querySelector("b").textContent="▶ "+(o.title||S.title||S.label);a.querySelector("small").textContent=(o.desc||S.desc||"")+"  "+S.label;
+      const h=document.createElement("h2");h.textContent=S.heading||"OFFICIAL SITE";
+      const sec=document.createElement("section");sec.className="cat site";sec.append(h,a);box.append(sec)}
     const eg=(lang==="en"&&c.en&&c.en.groups)||[];
     c.groups.forEach((grp,gi)=>{
       const items=[];

@@ -218,5 +218,17 @@
       },
       "url": "https://skypalette.jp/kemoket/"
     }
-  ]
+  ],
+  "site": {
+    "label": "BESTIAWORKS.COM",
+    "title": "BESTIA WORKS",
+    "url": "https://bestiaworks.com/",
+    "image": "ogp.jpg",
+    "desc": "公式サイト / 作品・プロジェクト・同人誌まとめ",
+    "en": {
+      "title": "BESTIA WORKS",
+      "desc": "Official site / works, projects & doujin"
+    },
+    "heading": "OFFICIAL SITE"
+  }
 }
